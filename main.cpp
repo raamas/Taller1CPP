@@ -4,21 +4,27 @@
 using namespace std;
 
 void calculateReservePrice(Reserva &reserva, Cancha c);
-void menu(int *opc1);
+Reserva createReserve(int id);
+void printReserve(Reserva r);
+
+void menu(int *opc);
 
 int minPc = 5;
 int maxPc = 8;
-Cancha canchas[]{
-    Cancha(),
-    Cancha("sintetica", 84, 7),
-    Cancha("sintetica", 100, 8),
 
-    Cancha("natural", 80, 5),
-    Cancha("natural", 100, 7),
-    Cancha("natural", 120, 8),
+Cancha canchas[]{
+    // Cancha(),
+    // Cancha("sintetica", 84, 7),
+    Cancha("sintetica", 100, 8,false),
+
+    // Cancha("natural", 80, 5),
+    // Cancha("natural", 100, 7),
+    // Cancha("natural", 120, 8),
 
 };
-Reserva reservas[100];
+
+Reserva reservas[6];
+
 int main()
 {
     Reserva reserva;
@@ -26,6 +32,7 @@ int main()
     int rc = 0;
     bool h, natural;
     string cn;
+    int ganancias = 0;
 
     do
     {
@@ -33,97 +40,29 @@ int main()
         switch (opc)
         {
         case 1:
-            cout << "INGRESE SU NOMBRE: ";
-            cout << "> ";
-            cin >> cn;
-
-            cout << "INGRESE SU LA CANTIDAD DE JUGADORES: ";
-            cout << "> ";
-            cin >> pc;
-            if (pc > maxPc || pc < minPc)
+            if (rc > 5)
             {
-                cout << "Ingrese una cantidad de jugadores valida. (5-8)" << endl;
+                cout << "Lo sentimos no hay canchas disponibles para";
                 break;
             }
-
-            cout << "CANCHA NATURAL?(0.NO, 1.SI): " << endl;
-            cout << "> ";
-            cin >> natural;
-            if (natural > 1 || natural < 0)
+            reserva = createReserve(rc);
+            if (reserva.getClientName()[0] == 'E')
             {
-                cout << "Ingrese un valor valido" << endl;
+                cout << "Hubo un error creando su reserva. Intentelo mas tarde" << endl;
+                cout << reserva.getClientName();
                 break;
             }
-
-            cout << "INGRESE LA HORA DE RESERVA: ";
-            cout << "> ";
-            cin >> t;
-            if (t > 23 || t < 0)
-            {
-                cout << "La hora de reserva debe ser valida(0-23)" << endl;
-                break;
-            }
-
-            cout << "INGRESE LA CANTIDAD DE TIEMPO DE RESERVA: ";
-            cout << "> ";
-            cin >> d;
-            if (d > 8)
-            {
-                cout << "No es posible reservar canchas por mas de 8 horas" << endl;
-                break;
-            }
-
-            cout << "DESEA INCLUIR HIDRATACION?(0.NO 1.SI): ";
-            cout << "> ";
-            cin >> h;
-            if (h > 1 || h < 0)
-            {
-                cout << "Ingrese un valor valido" << endl;
-                break;
-            }
-
-            for (int i = 0; i < size(canchas); i++)
-            {
-                Cancha cancha = canchas[i];
-                if (cancha.getCapacity() <= pc && cancha.getGroundType() == (natural ? "natural" : "sintetica"))
-                {
-                    reserva.setCancha(cancha);
-                }
-            }
-
-            reserva.setClientName(cn);
-            reserva.setTime(t);
-            reserva.setDuration(d);
-            reserva.setPlayerCount(pc);
-            reserva.setIncludeHydration(h);
-            reserva.setPrice(reserva.getCancha().getPricing() + (reserva.getIncludeHydration() ? 20 : 0));
             reservas[rc] = reserva;
+            ganancias += reserva.getPrice();
             rc++;
 
-            cout << "ID DE LA RESERVA: " << reservas[rc - 1].getId();
-            cout << "TIPO DE CANCHA: " << reservas[rc - 1].getCancha().getGroundType() << endl;
-            cout << "NOMBRE CLIENTE: " << reservas[rc - 1].getClientName() << endl;
-            cout << "HORA DE LA RESERVA: " << reservas[rc - 1].getTime() << endl;
-            cout << "TIEMPO RESERVADO: " << reservas[rc - 1].getDuration() << endl;
-            cout << "INCLUYE HIDRATACION: " << (reservas[rc - 1].getIncludeHydration() ? "SI" : "NO") << endl;
-            cout << "CANTIDAD DE JUGADORES" << reservas[rc - 1].getPlayerCount() << endl;
-            cout << "PRECIO DE LA RESERVA: " << reservas[rc - 1].getPrice() << endl;
-            cout << "RESERVA GENERADA EXISTOSAMENTE" << endl;
-            cout << endl;
+            printReserve(reservas[rc - 1]);
 
             break;
         case 2:
             for (int i = 0; i < rc; i++)
             {
-                cout << "ID DE LA RESERVA: " << reservas[i].getId();
-                cout << "TIPO DE CANCHA: " << reservas[i].getCancha().getGroundType() << endl;
-                cout << "NOMBRE CLIENTE: " << reservas[i].getClientName() << endl;
-                cout << "HORA DE LA RESERVA: " << reservas[i].getTime() << endl;
-                cout << "TIEMPO RESERVADO: " << reservas[i].getDuration() << endl;
-                cout << "INCLUYE HIDRATACION: " << (reservas[i].getIncludeHydration() ? "SI" : "NO") << endl;
-                cout << "CANTIDAD DE JUGADORES" << reservas[i].getPlayerCount() << endl;
-                cout << "PRECIO DE LA RESERVA: " << reservas[i].getPrice() << endl;
-                cout << endl;
+                printReserve(reservas[i]);
             }
             break;
         case 3:
@@ -135,83 +74,22 @@ int main()
             {
                 if (reservas[i].getId() == id)
                 {
-                    cout << "INGRESE SU NOMBRE: ";
-                    cout << "> ";
-                    cin >> cn;
-
-                    cout << "INGRESE SU LA CANTIDAD DE JUGADORES: ";
-                    cout << "> ";
-                    cin >> pc;
-                    if (pc > maxPc || pc < minPc)
+                    ganancias -= reservas[i].getPrice();
+                    reserva = createReserve(reservas[i].getId());
+                    if (reserva.getClientName() == "ERROR CODE")
                     {
-                        cout << "Ingrese una cantidad de jugadores valida. (5-8)" << endl;
+                        cout << "Hubo un error modificando la reserva. Por favor intentelo mas tarde" << endl;
                         break;
                     }
 
-                    cout << "CANCHA NATURAL?(0.NO, 1.SI): " << endl;
-                    cout << "> ";
-                    cin >> natural;
-                    if (natural > 1 || natural < 0)
-                    {
-                        cout << "Ingrese un valor valido" << endl;
-                        break;
-                    }
-
-                    cout << "INGRESE LA HORA DE RESERVA: ";
-                    cout << "> ";
-                    cin >> t;
-                    if (t > 23 || t < 0)
-                    {
-                        cout << "La hora de reserva debe ser valida(0-23)" << endl;
-                        break;
-                    }
-
-                    cout << "INGRESE LA CANTIDAD DE TIEMPO DE RESERVA: ";
-                    cout << "> ";
-                    cin >> d;
-                    if (d > 8)
-                    {
-                        cout << "No es posible reservar canchas por mas de 8 horas" << endl;
-                        break;
-                    }
-
-                    cout << "DESEA INCLUIR HIDRATACION?(0.NO 1.SI): ";
-                    cout << "> ";
-                    cin >> h;
-                    if (h > 1 || h < 0)
-                    {
-                        cout << "Ingrese un valor valido" << endl;
-                        break;
-                    }
-
-                    for (int i = 0; i < size(canchas); i++)
-                    {
-                        Cancha cancha = canchas[i];
-                        if (cancha.getCapacity() <= pc && cancha.getGroundType() == (natural ? "natural" : "sintetica"))
-                        {
-                            reservas[i].setCancha(cancha);
-                        }
-                    }
-
-                    reservas[i].setClientName(cn);
-                    reservas[i].setTime(t);
-                    reservas[i].setDuration(d);
-                    reservas[i].setPlayerCount(pc);
-                    reservas[i].setIncludeHydration(h);
-                    reservas[i].setPrice(reservas[i].getCancha().getPricing() + (reservas[i].getIncludeHydration() ? 20 : 0));
-
-                    cout << "ID DE LA RESERVA: " << reservas[i].getId();
-                    cout << "TIPO DE CANCHA: " << reservas[i].getCancha().getGroundType() << endl;
-                    cout << "NOMBRE CLIENTE: " << reservas[i].getClientName() << endl;
-                    cout << "HORA DE LA RESERVA: " << reservas[i].getTime() << endl;
-                    cout << "TIEMPO RESERVADO: " << reservas[i].getDuration() << endl;
-                    cout << "INCLUYE HIDRATACION: " << (reservas[i].getIncludeHydration() ? "SI" : "NO") << endl;
-                    cout << "CANTIDAD DE JUGADORES" << reservas[i].getPlayerCount() << endl;
-                    cout << "PRECIO DE LA RESERVA: " << reservas[i].getPrice() << endl;
-                    cout << "RESERVA MODIFICADA EXISTOSAMENTE" << endl;
-                    cout << endl;
+                    ganancias += reserva.getPrice();
+                    reservas[i] = reserva;
+                    printReserve(reservas[i]);
                 }
             }
+            break;
+        case 4:
+            cout << "Se han generado: " << ganancias << "$ en ganancias" << endl;
             break;
         default:
             break;
@@ -227,9 +105,99 @@ void menu(int *opc)
     cout << "1.Crear Reserva" << endl;
     cout << "2.Listar Reservas" << endl;
     cout << "3.Modificar Reserva" << endl;
+    cout << "4.Ver Ganacias del dia" << endl;
+    cout << "0.Salir" << endl;
     cout << "> ";
     cin >> *opc;
 }
+
+Reserva createReserve(int id)
+{
+
+    int t, d, pc;
+    bool h, natural;
+    string cn;
+    Reserva reserva;
+
+    cout << "INGRESE SU NOMBRE: ";
+    cin >> cn;
+
+    cout << "INGRESE SU LA CANTIDAD DE JUGADORES: ";
+    cin >> pc;
+    if (pc > maxPc || pc < minPc)
+    {
+        return Reserva(-1, "EC: Ingrese una cantidad de jugadores valida. (5-8)");
+    }
+
+    cout << "CANCHA NATURAL?(0.NO, 1.SI): ";
+    cin >> natural;
+    if (natural > 1 || natural < 0)
+    {
+        return Reserva(-1, "EC: Ingrese un valor valido");
+    }
+
+    cout << "INGRESE LA HORA DE RESERVA: ";
+    cin >> t;
+    if (t > 23 || t < 0)
+    {
+        return Reserva(-1, "EC: La hora de reserva debe ser valida(0-23)");
+    }
+
+    cout << "INGRESE LA CANTIDAD DE TIEMPO DE RESERVA: ";
+    cin >> d;
+    if (d > 8)
+    {
+        return Reserva(-1, "EC: No es posible reservar canchas por mas de 8 horas");
+    }
+
+    cout << "DESEA INCLUIR HIDRATACION?(0.NO 1.SI): ";
+    cin >> h;
+    if (h > 1 || h < 0)
+    {
+        return Reserva(-1, "EC: Ingrese un valor valido");
+    }
+    cout << endl;
+
+    for (int i = 0; i < size(canchas); i++)
+    {
+        Cancha cancha = canchas[i];
+        if (cancha.getIsAvailable() == false) {
+            return Reserva(-1, "EC: No hay canchas disponibles en este momento");
+        };
+        if (cancha.getCapacity() >= pc && cancha.getGroundType() == (natural ? "natural" : "sintetica"))
+        {
+            cancha.setIsAvailable(false);
+            reserva.setCancha(cancha);
+        }
+    }
+    reserva.setId(id);
+    reserva.setClientName(cn);
+    reserva.setTime(t);
+    reserva.setDuration(d);
+    reserva.setPlayerCount(pc);
+    reserva.setIncludeHydration(h);
+    reserva.setPrice((reserva.getIncludeHydration() ? 20 : 0) + (reserva.getCancha().getPricing() * reserva.getDuration()));
+    return reserva;
+};
+
+void printReserve(Reserva r)
+{
+    cout << "ID DE LA RESERVA: " << r.getId() << endl;
+    cout << "TIPO DE CANCHA: " << r.getCancha().getGroundType() << endl;
+    cout << "NOMBRE CLIENTE: " << r.getClientName() << endl;
+    cout << "HORA DE LA RESERVA: " << r.getTime() << ":00" << endl;
+    cout << "TIEMPO RESERVADO: " << r.getDuration() << endl;
+    cout << "INCLUYE HIDRATACION: " << (r.getIncludeHydration() ? "SI" : "NO") << endl;
+    cout << "CANTIDAD DE JUGADORES: " << r.getPlayerCount() << endl;
+    cout << " ---------------------------------------" << endl;
+    cout << "PRECIO DE LA CANCHA: " << r.getCancha().getPricing() << "$ ";
+    cout << "* " << r.getDuration() << " horas " << (r.getCancha().getPricing() * r.getDuration()) << "" << endl;
+    cout << "VALOR HIDRATACION: " << (r.getIncludeHydration() ? 20 : 0) << "$ " << endl;
+    cout << "PRECIO DE LA RESERVA: " << r.getPrice() << endl;
+    cout << " ---------------------------------------" << endl;
+    cout << "" << endl;
+    cout << endl;
+};
 
 // void calculateReservePrice(Reserva &reserva, Cancha c, Cancha *canchas) {
 //     int pc = reserva.getPlayerCount();

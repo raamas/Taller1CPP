@@ -17,6 +17,12 @@ Reserva::Reserva()
     includeHydration = false;
 };
 
+Reserva::Reserva(int i, string msg)
+{
+    clientName = msg;
+    id = i;
+}
+
 Reserva::Reserva(Cancha c, int t, int d, string cn, int pc, bool h)
 {
     cancha = c;

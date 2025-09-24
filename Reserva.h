@@ -20,6 +20,7 @@ class Reserva
 
 public:
     Reserva();
+    Reserva(int i, string msg);
     Reserva(Cancha c, int t, int d, string cn, int pc, bool h = false);
     Cancha getCancha();
     int getTime();
