@@ -9,8 +9,8 @@ using namespace std;
 Reserva::Reserva()
 {
     Cancha cancha;
-    time = 20;
-    duration = 1;
+    time = 0;
+    duration = 0;
     price = cancha.getPricing()*duration;
     clientName = "";
     includeHydration = false;

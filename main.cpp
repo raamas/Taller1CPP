@@ -25,7 +25,7 @@ Cancha canchas[]{
 };
 
 Reserva reservas[6];
-int rc = 2;
+int rc = 0;
 
 int main()
 {
@@ -164,11 +164,19 @@ Reserva createReserve(int id)
         for (int j = 0; j < rc; j++)
         {
             bool sameField = reservas[j].getCancha().getId() == canchas[i].getId();
+
             bool startsEarlier = t <= reservas[j].getTime();
             bool endsLater = t + d > reservas[j].getTime();
+
             bool startsBeforeEnd = t < reservas[j].getTime() + reservas[j].getDuration();
             bool keepsGoing = t + d > reservas[j].getTime() + reservas[j].getDuration();
-            bool sameTime = (startsEarlier && endsLater) || (startsBeforeEnd && keepsGoing);
+
+            bool endsBefore = t +d < reservas[j].getTime() + reservas[j].getDuration();
+
+            bool sameTime = (startsEarlier) || (startsBeforeEnd && keepsGoing) || (startsBeforeEnd && endsBefore);
+            if (reservas[j].getClientName() != "") {
+                printReserve(reservas[j]);
+            }
             if (sameField && sameTime)
             {
                 canchasDisponibles[i] = Cancha(-1);
@@ -182,9 +190,9 @@ Reserva createReserve(int id)
         reserva = Reserva();
         return Reserva(-1, "EC: No hay canchas disponibles en ese espacio.\n");
     }
+    cout << "CANCHAS DISPONIBLES: " << endl;
     for (int i = 0; i < size(canchas); i++)
     {
-        cout << "Canchas Disponibles: " << endl;
         printField(canchasDisponibles[i]);
     }
 
@@ -235,6 +243,7 @@ void printField(Cancha cancha)
     }
     cout << "ID DE CANCHA: " << cancha.getId() << endl;
     cout << "TIPO DE CANCHA: " << cancha.getGroundType() << endl;
+    cout << "CAPACIDAD DE LA CANCHA: " << cancha.getCapacity() << endl;
     cout << "PRECIO DE CANCHA: " << cancha.getPricing() << endl;
     cout << endl;
 }
