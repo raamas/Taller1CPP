@@ -6,17 +6,23 @@
 
 Cancha::Cancha()
 {
-    groundType = "sintetica";
-    pricing = 60.0;
-    capacity = 5;
-    isAvailable = true;
+    id = 0;
+    groundType = "";
+    pricing = 0;
+    capacity = 0;
 };
-Cancha::Cancha(string gt, double p, int c, bool a)
+
+Cancha::Cancha(int i)
 {
+    id = i;
+};
+
+Cancha::Cancha(int i, string gt, double p, int c)
+{
+    this->id = i;
     this->groundType = gt;
     this->pricing = p;
     this->capacity = c;
-    this->isAvailable = a;
 };
 
 string Cancha::getGroundType()
@@ -32,9 +38,9 @@ int Cancha::getCapacity()
     return capacity;
 };
 
-bool Cancha::getIsAvailable()
+int Cancha::getId()
 {
-    return isAvailable;
+    return id;
 }
 
 void Cancha::setGroundType(string gt)
@@ -50,7 +56,8 @@ void Cancha::setCapacity(int c)
     this->capacity = c;
 };
 
-void Cancha::setIsAvailable(bool a)
+
+void Cancha::setId(int i)
 {
-    this->isAvailable = a;
+    this->id = i;
 }

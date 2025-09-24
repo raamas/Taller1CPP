@@ -14,20 +14,19 @@ class Reserva
     int duration;
     double price;
     string clientName;
-    int playerCount;
     bool includeHydration;
     int id;
 
 public:
     Reserva();
     Reserva(int i, string msg);
-    Reserva(Cancha c, int t, int d, string cn, int pc, bool h = false);
+    Reserva(int id, Cancha c, int t, int d, string cn, bool h = false);
+
     Cancha getCancha();
     int getTime();
     int getDuration();
     double getPrice();
     string getClientName();
-    int getPlayerCount();
     bool getIncludeHydration();
     int getId();
 
@@ -36,11 +35,9 @@ public:
     void setDuration(int d);
     void setPrice(int p);
     void setClientName(string cn);
-    void setPlayerCount(int pc);
     void setIncludeHydration(bool h);
-    void setId(int id);
 
-    void calculatePrice();
+    void setId(int id);
 };
 
 #endif // TALLER1_RESERVA_H

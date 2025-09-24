@@ -11,9 +11,8 @@ Reserva::Reserva()
     Cancha cancha;
     time = 20;
     duration = 1;
-    price = cancha.getPricing();
+    price = cancha.getPricing()*duration;
     clientName = "";
-    playerCount = cancha.getCapacity();
     includeHydration = false;
 };
 
@@ -23,14 +22,14 @@ Reserva::Reserva(int i, string msg)
     id = i;
 }
 
-Reserva::Reserva(Cancha c, int t, int d, string cn, int pc, bool h)
+Reserva::Reserva(int i, Cancha c, int t, int d, string cn, bool h)
 {
+    id = i;
     cancha = c;
     time = t;
     duration = d;
-    price = c.getPricing();
+    price = c.getPricing()*d + (h? 20:0);
     clientName = cn;
-    playerCount = pc;
     includeHydration = h;
 };
 
@@ -54,10 +53,7 @@ string Reserva::getClientName()
 {
     return clientName;
 };
-int Reserva::getPlayerCount()
-{
-    return playerCount;
-};
+
 bool Reserva::getIncludeHydration()
 {
     return includeHydration;
@@ -88,10 +84,7 @@ void Reserva::setClientName(string cn)
 {
     clientName = cn;
 };
-void Reserva::setPlayerCount(int pc)
-{
-    playerCount = pc;
-};
+
 void Reserva::setIncludeHydration(bool h)
 {
     includeHydration = h;

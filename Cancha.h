@@ -11,21 +11,22 @@ class Cancha
     string groundType;
     double pricing;
     int capacity;
-    bool isAvailable;
+    int id;
 
 public:
     Cancha();
-    Cancha(string gt, double p, int c, bool a = true);
+    Cancha(int i);
+    Cancha(int i, string gt, double p, int c);
 
     string getGroundType();
     double getPricing();
     int getCapacity();
-    bool getIsAvailable();
+    int getId();
 
     void setGroundType(string gt);
     void setPricing(double p);
     void setCapacity(int c);
-    void setIsAvailable(bool a);
+    void setId(int i);
 };
 
 #endif // TALLER1_CANCHA_H
